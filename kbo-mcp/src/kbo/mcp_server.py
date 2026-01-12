@@ -8,7 +8,7 @@ from .places import build_candidates_from_prompt
 from .realtime_playwright import build_realtime_payload_playwright
 
 # Weather 예제처럼 서버를 직접 실행할 수 있도록 host/port를 지정.
-mcp = FastMCP("kbo", host="0.0.0.0", port=8000)
+mcp = FastMCP("kbo", host="0.0.0.0", port=10000)
 # host="0.0.0.0" 는 모든 네트워크 인터페이스에서 접속을 허용한다는 뜻
 # 127.0.0.1은 로컬에서만 접근 가능
 

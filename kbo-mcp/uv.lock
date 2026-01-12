@@ -279,6 +279,7 @@ dependencies = [
     { name = "lxml" },
     { name = "mcp", extra = ["cli"] },
     { name = "playwright" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
@@ -288,6 +289,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.0.2" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.25.0" },
     { name = "playwright", specifier = ">=1.57.0" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
 ]
 
 [[package]]

@@ -1,8 +1,9 @@
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse
 
 from .db import ( # .은 현재 패키지 내부를 뜻하는 상대 import이다. 외부패키지/모듈과 이름충돌이 나지 않게 하기 위함이다
     connect, init_db, insert_games, get_games_by_date,
-    is_month_cache_fresh, upsert_month_cache
+    is_month_cache_fresh, upsert_month_cache, get_stadium_by_game_id as get_stadium_by_game_id_db
 )
 from .scraper import scrape_month_schedule
 
@@ -55,3 +56,33 @@ async def get_schedule_async(db_path: str, date_yyyy_mm_dd: str) -> list[dict]:
         }
         for r in rows
     ]
+
+
+def _extract_game_id(gamecenter_url: str | None) -> str | None:
+    if not gamecenter_url:
+        return None
+    q = parse_qs(urlparse(gamecenter_url).query)
+    return q.get("gameId", [None])[0]
+
+
+async def get_stadium_by_game_id(
+    db_path: str,
+    date_yyyy_mm_dd: str,
+    game_id: str,
+) -> str | None:
+    year, month, _ = map(int, date_yyyy_mm_dd.split("-"))
+    await ensure_month_cached_async(db_path, year, month)
+
+    conn = connect(db_path)
+    stadium = get_stadium_by_game_id_db(conn, date_yyyy_mm_dd, game_id)
+    if stadium:
+        conn.close()
+        return stadium
+
+    # 데이터가 불안정하거나 구조가 달라질 때를 대비한 안전장치
+    rows = get_games_by_date(conn, date_yyyy_mm_dd)
+    conn.close()
+    for r in rows:
+        if _extract_game_id(r.gamecenter_url) == game_id:
+            return r.stadium
+    return None

@@ -150,7 +150,8 @@ async def get_restaurant_candidates(prompt: str) -> dict:
 def main() -> None:
     load_dotenv()
     # Weather 예제처럼 SSE transport로 서버 실행.
-    mcp.run(transport="sse")
+    #mcp.run(transport="sse")
+    mcp.run(transport="streamable-http")
     # sse : server-sent events(HTTP 연결을 계속 유지하면서 서버가 이벤트를 스트림으로 보내는 방식)
     # mcp 서버가 클라이언트에 도구 호출 결과/이벤트를 지속적으로 전송하는 통신 방식으로 쓰인다.
 

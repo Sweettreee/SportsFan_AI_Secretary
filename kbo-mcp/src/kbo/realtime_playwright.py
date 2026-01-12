@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlparse # URL 쿼리 파싱
 
 from playwright.async_api import async_playwright
 
-from .service import get_schedule_async
+from .service import get_schedule_async, _extract_game_id
 
 _CACHE: dict[str, tuple[float, dict[str, Any]]] = {} # key : URL, value : (저장시간, 데이터)
 _LAST_CALL: dict[str, float] = {}
@@ -38,13 +38,6 @@ async def _rate_limit(key: str) -> None:
         if wait > 0:
             await asyncio.sleep(wait)
     _LAST_CALL[key] = time.monotonic()
-
-
-def _extract_game_id(gamecenter_url: str | None) -> str | None: # game_id를 url에서 추출
-    if not gamecenter_url:
-        return None
-    q = parse_qs(urlparse(gamecenter_url).query)
-    return q.get("gameId", [None])[0]
 
 
 def _select_game( # 경기 목록 중에서 하나를 선택하는 함수

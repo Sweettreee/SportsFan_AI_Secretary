@@ -152,3 +152,16 @@ def get_games_by_date(conn: sqlite3.Connection, date_yyyy_mm_dd: str) -> list[Ga
             fetched_at=r["fetched_at"],
         ))
     return out
+
+
+def get_stadium_by_game_id(
+    conn: sqlite3.Connection,
+    date_yyyy_mm_dd: str,
+    game_id: str,
+) -> str | None:
+    row = conn.execute("""
+    SELECT stadium FROM schedules
+    WHERE game_date=? AND game_id=?
+    LIMIT 1
+    """, (date_yyyy_mm_dd, game_id)).fetchone()
+    return row["stadium"] if row else None

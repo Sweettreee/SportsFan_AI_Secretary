@@ -123,7 +123,10 @@ async def _scrape_review(gamecenter_url: str) -> FetchResult:
                 browser = await p.chromium.launch(headless=True)
                 page = await browser.new_page()
                 await page.goto(url, wait_until="domcontentloaded")
-                await page.wait_for_timeout(800)
+                try:
+                    await page.wait_for_selector("#tblScordboard2", timeout=5000)
+                except Exception:
+                    await page.wait_for_timeout(800)
 
                 linescore = await _table_rows(page, "#tblScordboard2 tbody tr")
                 summary = await _table_rows(page, "#tblScordboard1 tbody tr")
@@ -190,7 +193,10 @@ async def _scrape_lineup(gamecenter_url: str) -> FetchResult:
                 browser = await p.chromium.launch(headless=True)
                 page = await browser.new_page()
                 await page.goto(url, wait_until="domcontentloaded")
-                await page.wait_for_timeout(800)
+                try:
+                    await page.wait_for_selector("#tblAwayLineUp", timeout=5000)
+                except Exception:
+                    await page.wait_for_timeout(800)
 
                 away = await _table_rows(page, "#tblAwayLineUp tbody tr")
                 home = await _table_rows(page, "#tblHomeLineUp tbody tr")
